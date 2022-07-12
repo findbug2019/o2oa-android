@@ -38,7 +38,7 @@ import net.zoneland.x.bpm.mobile.v1.zoneXBPM.O2
 import net.zoneland.x.bpm.mobile.v1.zoneXBPM.O2SDKManager
 import net.zoneland.x.bpm.mobile.v1.zoneXBPM.R
 import net.zoneland.x.bpm.mobile.v1.zoneXBPM.app.base.BaseMVPActivity
-import net.zoneland.x.bpm.mobile.v1.zoneXBPM.app.o2.webview.LocalImageViewActivity
+import net.zoneland.x.bpm.mobile.v1.zoneXBPM.app.clouddrive.v2.viewer.BigImageViewActivity
 import net.zoneland.x.bpm.mobile.v1.zoneXBPM.app.o2.webview.TaskWebViewActivity
 import net.zoneland.x.bpm.mobile.v1.zoneXBPM.app.tbs.FileReaderActivity
 import net.zoneland.x.bpm.mobile.v1.zoneXBPM.core.component.adapter.CommonRecycleViewAdapter
@@ -158,10 +158,10 @@ class O2ChatActivity : BaseMVPActivity<O2ChatContract.View, O2ChatContract.Prese
         if (TextUtils.isEmpty(conversationId)) {
             XToast.toastShort(this, "缺少参数！")
             finish()
+            return
         }
         //消息列表初始化
         sr_o2_chat_message_layout.setOnRefreshListener {
-            XLog.debug("下啦零零落落零零落落来了")
             getPageData()
         }
         rv_o2_chat_messages.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
@@ -172,11 +172,12 @@ class O2ChatActivity : BaseMVPActivity<O2ChatContract.View, O2ChatContract.Prese
             }
 
             override fun playAudio(position: Int, msgBody: IMMessageBody) {
-                XLog.debug("audio play position: $position")
+                showLoadingDialog()
                 mPresenter.getFileFromNetOrLocal(position, msgBody)
             }
 
             override fun openOriginImage(position: Int, msgBody: IMMessageBody) {
+                showLoadingDialog()
                  mPresenter.getFileFromNetOrLocal(position, msgBody)
             }
 
@@ -187,6 +188,7 @@ class O2ChatActivity : BaseMVPActivity<O2ChatContract.View, O2ChatContract.Prese
             }
 
             override fun openFile(position: Int, msgBody: IMMessageBody) {
+                showLoadingDialog()
                 mPresenter.getFileFromNetOrLocal(position, msgBody)
             }
 
@@ -246,6 +248,12 @@ class O2ChatActivity : BaseMVPActivity<O2ChatContract.View, O2ChatContract.Prese
                 menuList.add(O2IM.IM_Message_Menu_name_Revoke_group)
             }
         }
+        val messageBody = message.messageBody()
+        if (messageBody != null) {
+            if (messageBody.type == MessageType.text.key) {
+                menuList.add(O2IM.IM_Message_Menu_text_copy)
+            }
+        }
         if (menuList.isNotEmpty()) {
             val groupId = 0
             menuList.forEachIndexed { index, s ->
@@ -253,6 +261,8 @@ class O2ChatActivity : BaseMVPActivity<O2ChatContract.View, O2ChatContract.Prese
                 menu?.getItem(index)?.setOnMenuItemClickListener { item ->
                     if (item.title == O2IM.IM_Message_Menu_name_Revoke || item.title == O2IM.IM_Message_Menu_name_Revoke_group) {
                         revokeMsg(message)
+                    } else if (item.title == O2IM.IM_Message_Menu_text_copy) {
+                        copyText(message)
                     }
                     true
                 }
@@ -267,6 +277,14 @@ class O2ChatActivity : BaseMVPActivity<O2ChatContract.View, O2ChatContract.Prese
         XLog.debug("撤回消息，${message.createPerson}" )
         adapter.removeMessage(message)
         mPresenter.revokeMsg(message.id)
+    }
+
+    /**
+     * 复制文字内容到剪贴板
+     */
+    private fun copyText(message: IMMessage) {
+        AndroidUtils.copyTextToClipboard(message.messageBody()?.body ?: "" , this)
+        XToast.toastShort(this, getString(R.string.message_copy_success))
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
@@ -550,6 +568,7 @@ class O2ChatActivity : BaseMVPActivity<O2ChatContract.View, O2ChatContract.Prese
     }
 
     override fun localFile(filePath: String, msgType: String, position: Int) {
+        hideLoadingDialog()
         XLog.debug("local file :$filePath type:$msgType")
         when (msgType) {
             MessageType.audio.key -> {
@@ -557,7 +576,7 @@ class O2ChatActivity : BaseMVPActivity<O2ChatContract.View, O2ChatContract.Prese
             }
             MessageType.image.key -> {
                 //打开大图
-                go<LocalImageViewActivity>(LocalImageViewActivity.startBundle(filePath))
+                BigImageViewActivity.startLocalFile(this, filePath)
             }
             else -> go<FileReaderActivity>(FileReaderActivity.startBundle(filePath))
         }
@@ -565,6 +584,7 @@ class O2ChatActivity : BaseMVPActivity<O2ChatContract.View, O2ChatContract.Prese
     }
 
     override fun downloadFileFail(msg: String) {
+        hideLoadingDialog()
         XToast.toastShort(this, msg)
     }
 
@@ -703,7 +723,7 @@ class O2ChatActivity : BaseMVPActivity<O2ChatContract.View, O2ChatContract.Prese
                     .o2Subscribe {
                         onNext { (granted, _, _) ->
                             if (!granted){
-                                O2DialogSupport.openAlertDialog(this@O2ChatActivity, "语音消息需要权限, 去设置", { permissionSetting() })
+                                O2DialogSupport.openAlertDialog(this@O2ChatActivity, getString(R.string.dialog_msg_audio_need_permission), { permissionSetting() })
                             }
                         }
                         onError { e, _ ->
@@ -747,7 +767,7 @@ class O2ChatActivity : BaseMVPActivity<O2ChatContract.View, O2ChatContract.Prese
                     .o2Subscribe {
                         onNext {  (granted, _, _) ->
                             if (!granted){
-                                O2DialogSupport.openAlertDialog(this@O2ChatActivity, "拍照需要权限, 去设置", { permissionSetting() })
+                                O2DialogSupport.openAlertDialog(this@O2ChatActivity, getString(R.string.dialog_msg_camera_need_permission), { permissionSetting() })
                             } else {
                                 openCamera()
                             }
@@ -861,7 +881,7 @@ class O2ChatActivity : BaseMVPActivity<O2ChatContract.View, O2ChatContract.Prese
                 XLog.debug("录音结束 返回结果 ${result.path} ， 是否取消：$isAudioRecordCancel, 录音时间：$audioRecordTime")
                 if (audioRecordTime < 1) {
                     runOnUiThread {
-                        XToast.toastShort(this@O2ChatActivity, "录音时间太短！")
+                        XToast.toastShort(this@O2ChatActivity, getString(R.string.message_im_audio_too_short))
                     }
                 } else {
                     if (!isAudioRecordCancel) {

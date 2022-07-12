@@ -3,9 +3,10 @@ package net.zoneland.x.bpm.mobile.v1.zoneXBPM.widgets
 import android.app.Activity
 import android.text.TextUtils
 import android.webkit.DownloadListener
-import net.zoneland.x.bpm.mobile.v1.zoneXBPM.app.o2.webview.LocalImageViewActivity
+import net.zoneland.x.bpm.mobile.v1.zoneXBPM.app.clouddrive.v2.viewer.BigImageViewActivity
 import net.zoneland.x.bpm.mobile.v1.zoneXBPM.app.tbs.FileReaderActivity
 import net.zoneland.x.bpm.mobile.v1.zoneXBPM.utils.*
+import net.zoneland.x.bpm.mobile.v1.zoneXBPM.utils.cache.MD5Util
 import net.zoneland.x.bpm.mobile.v1.zoneXBPM.utils.extension.go
 import net.zoneland.x.bpm.mobile.v1.zoneXBPM.utils.extension.o2Subscribe
 import net.zoneland.x.bpm.mobile.v1.zoneXBPM.widgets.dialog.LoadingDialog
@@ -47,7 +48,9 @@ class O2WebviewDownloadListener(val activity: Activity) : DownloadListener {
     private fun downloadFile(url: String, contentDisposition: String?, mimetype: String?) {
         val fileName = getFileName(contentDisposition, mimetype)
         val ac = weakActivity.get() ?: return
-        val path = FileExtensionHelper.getXBPMTempFolder(ac) + File.separator + fileName
+        // 防止文件名相同，md5 url作为文件夹名称
+        val dirUrl = MD5Util.getMD5String(url) ?: "null"
+        val path = FileExtensionHelper.getXBPMTempFolder(ac) + File.separator + dirUrl + File.separator + fileName
         XLog.info("下载文件到本地， filePath : $path")
         showLoadingDialog()
         Observable.just(DownloadFileForm(url, path))
@@ -63,8 +66,8 @@ class O2WebviewDownloadListener(val activity: Activity) : DownloadListener {
                 onError { e, _ ->
                     XLog.error("", e)
                     hideLoadingDialog()
-                    val ac = weakActivity.get()
-                    if (ac != null) {
+                    val aci = weakActivity.get()
+                    if (aci != null) {
                         XToast.toastShort(ac, "下载文件失败！${e?.message ?: ""}")
                     }
                 }
@@ -77,7 +80,8 @@ class O2WebviewDownloadListener(val activity: Activity) : DownloadListener {
         ac?.runOnUiThread {
             if (file.exists()) {
                 if (FileExtensionHelper.isImageFromFileExtension(file.extension)) {
-                    ac.go<LocalImageViewActivity>(LocalImageViewActivity.startBundle(file.absolutePath))
+//                    ac.go<LocalImageViewActivity>(LocalImageViewActivity.startBundle(file.absolutePath))
+                    BigImageViewActivity.startLocalFile(ac, file.absolutePath)
                 } else {
                     ac.go<FileReaderActivity>(FileReaderActivity.startBundle(file.absolutePath))
                 }
@@ -135,7 +139,7 @@ class O2WebviewDownloadListener(val activity: Activity) : DownloadListener {
     }
 
 
-    inner class DownloadFileForm(
+    public class DownloadFileForm(
         val downloadUrl:String,
         val filePath: String
     )

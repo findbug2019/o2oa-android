@@ -23,6 +23,7 @@ import kotlinx.android.synthetic.main.activity_work_web_view.*
 import net.zoneland.x.bpm.mobile.v1.zoneXBPM.O2SDKManager
 import net.zoneland.x.bpm.mobile.v1.zoneXBPM.R
 import net.zoneland.x.bpm.mobile.v1.zoneXBPM.app.base.BaseMVPActivity
+import net.zoneland.x.bpm.mobile.v1.zoneXBPM.app.clouddrive.v2.viewer.BigImageViewActivity
 import net.zoneland.x.bpm.mobile.v1.zoneXBPM.app.tbs.FileReaderActivity
 import net.zoneland.x.bpm.mobile.v1.zoneXBPM.core.component.api.APIAddressHelper
 import net.zoneland.x.bpm.mobile.v1.zoneXBPM.model.bo.WorkNewActionItem
@@ -555,6 +556,7 @@ class TaskWebViewActivity : BaseMVPActivity<TaskWebViewContract.View, TaskWebVie
     override fun workOrWorkCompletedInfo(info: WorkInfoRes?) {
         if (info != null && !TextUtils.isEmpty(info.completedTime)) {
             XLog.info("当前工作已完成！")
+            workCompletedId = info.id
             isWorkCompleted = true
         }
     }
@@ -641,7 +643,8 @@ class TaskWebViewActivity : BaseMVPActivity<TaskWebViewContract.View, TaskWebVie
 //        if (file.exists()) AndroidUtils.openFileWithDefaultApp(this, file)
         if (file.exists()){
             if (FileExtensionHelper.isImageFromFileExtension(file.extension)) {
-                go<LocalImageViewActivity>(LocalImageViewActivity.startBundle(file.absolutePath))
+//                go<LocalImageViewActivity>(LocalImageViewActivity.startBundle(file.absolutePath))
+                BigImageViewActivity.startLocalFile(this, file.absolutePath)
             }else {
                 go<FileReaderActivity>(FileReaderActivity.startBundle(file.absolutePath))
 //                QbSdk.openFileReader(this, file.absolutePath, HashMap<String, String>()) { p0 -> XLog.info("打开文件返回。。。。。$p0") }
@@ -1024,13 +1027,13 @@ class TaskWebViewActivity : BaseMVPActivity<TaskWebViewContract.View, TaskWebVie
     private fun showPictureChooseMenu() {
         BottomSheetMenu(this)
                 .setTitle(getString(R.string.upload_photo))
-                .setItem(getString(R.string.take_from_album), resources.getColor(R.color.z_color_text_primary)) {
+                .setItem(getString(R.string.take_from_album), ContextCompat.getColor(this, R.color.z_color_text_primary)) {
                     takeFromPictures()
                 }
-                .setItem(getString(R.string.take_photo), resources.getColor(R.color.z_color_text_primary)) {
+                .setItem(getString(R.string.take_photo), ContextCompat.getColor(this, R.color.z_color_text_primary)) {
                     takeFromCamera()
                 }
-                .setCancelButton(getString(R.string.cancel), resources.getColor(R.color.z_color_text_hint)) {
+                .setCancelButton(getString(R.string.cancel), ContextCompat.getColor(this, R.color.z_color_text_hint)) {
                     XLog.debug("取消。。。。。")
                 }
                 .show()

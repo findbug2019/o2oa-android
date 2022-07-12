@@ -235,6 +235,7 @@
     <string name="yunpan_rename">Rename</string>
     <string name="yunpan_delete">Delete</string>
     <string name="yunpan_share">Share</string>
+    <string name="yunpan_save_to_my_pan">Save To My Disk</string>
     <string name="yunpan_send">Send</string>
     <string name="yunpan_move">Move</string>
     <string name="yunpan_menu_list">List display</string>
@@ -254,7 +255,46 @@
     <string name="yunpan_share_cancel">Cancel sharing</string>
     <string name="yunpan_share_shield">Shield</string>
 
-<!--    <string name="share_file_menu_test">Test</string>-->
+    <string name="cloud_file_my">My Files</string>
+    <string name="cloud_file_my_desc">Personal Files</string>
+    <string name="cloud_file_org">Corporate Files</string>
+    <string name="cloud_file_org_desc">Share Files Internally</string>
+    <string name="cloud_file_my_favorite">My Favorite</string>
+    <string name="cloud_file_my_zone">My Zone</string>
+    <string name="cloud_file_zone_create_title">Create a shared workspace</string>
+    <string name="cloud_file_zone_update_title">Update a shared workspace</string>
+    <string name="cloud_file_zone_create_name_hint">Please enter a name for the shared workspace</string>
+    <string name="cloud_file_zone_create_desc_hint">Please enter a description of the shared workspace</string>
+    <string name="cloud_file_zone_menu_cancel_favorite">Unfavorite</string>
+    <string name="cloud_file_zone_menu_rename_favorite">Rename</string>
+    <string name="cloud_file_zone_menu_add_favorite">Add To Favorites</string>
+    <string name="cloud_file_zone_menu_edit_zone">Edit</string>
+    <string name="cloud_file_zone_menu_delete_zone">Delete</string>
+
+    <string name="message_cloud_rename_alert">Please select an item to rename !</string>
+    <string name="message_cloud_delete_alert">Please select at least one piece of data to delete !</string>
+    <string name="message_cloud_save_to_my_pan_alert">Please select at least one piece of data to save to the network disk !</string>
+    <string name="message_cloud_move_alert">Please select at least one piece of data to move !</string>
+    <string name="message_cloud_share_alert">Please select at least one piece of data to share !</string>
+    <string name="message_cloud_confirm_delete_data">Are you sure you want to delete the selected data ?</string>
+    <string name="message_cloud_not_empty_name_alert">Name is required !</string>
+    <string name="message_cloud_move_success">Move successfully !</string>
+    <string name="message_cloud_create_folder_success">Folder created successfully !</string>
+    <string name="message_cloud_upload_success">Uploaded successfully !</string>
+    <string name="message_cloud_share_success">Share success !</string>
+    <string name="message_cloud_open_file_fail">Open file exception !</string>
+    <string name="message_cloud_folder_name_not_empty">Folder name cannot be empty !</string>
+    <string name="message_cloud_create_folder_fail">Folder creation failed !</string>
+    <string name="message_cloud_upload_fail">upload failed !</string>
+    <string name="message_cloud_create_zone_success">Create shared area successfully !</string>
+    <string name="message_cloud_update_zone_success">Update shared area successfully !</string>
+    <string name="message_cloud_delete_zone_success">Delete shared area successfully !</string>
+    <string name="message_cloud_add_favorite_success">添加收藏成功！</string>
+    <string name="message_cloud_cancel_favorite_success">取消收藏成功！</string>
+    <string name="message_cloud_rename_favorite_success">重命名成功！</string>
+
+
+    <!--    <string name="share_file_menu_test">Test</string>-->
 
     <!--chat activity -->
 <!--    <string name="title_activity_chat">Real time message</string>-->
@@ -342,6 +382,8 @@
     <string name="message_unbind_fail">Failed to unbind！</string>
     <string name="message_change_skin_will_reboot">Are you sure you want to switch skin? Switching will restart the application？</string>
     <string name="message_camera_file_create_error">Unable to take photos, unable to get the stored file!</string>
+    <string name="message_update_success">update completed !</string>
+    <string name="message_back_error">return error !</string>
 
     <!-- group activity -->
     <string name="title_activity_group">My Groups </string>
@@ -540,6 +582,11 @@
         <item>My collection</item>
         <item>Section</item>
     </string-array>
+    <string name="bbs_send_reply_btn">Send</string>
+    <string name="bbs_mute_send_reply_btn">Forbidden</string>
+    <string name="bbs_write_reply_hint">Write comments...</string>
+    <string name="bbs_mute_reply_hint">Forbidden comments...</string>
+
 <!--    <string-array name="bbs_publish_subject_type_list">-->
 <!--        <item>讨论</item>-->
 <!--        <item>投票</item>-->
@@ -768,6 +815,9 @@
     <string name="message_members_cannot_less_three">The number of members should not be less than 3！</string>
     <string name="message_share_file_not_exist">The shared file does not exist</string>
     <string name="message_contact_new_no_permission_for_search">The current user is restricted from querying the address book</string>
+    <string name="message_save_image_album">Successfully saved the picture to the album !</string>
+    <string name="message_copy_success">Copy successfully !</string>
+    <string name="message_im_audio_too_short">Recording time is too short !</string>
 
     <!--    dialog -->
     <string name="dialog_msg_bind_to_server_fail">Failed to bind the server. Please check whether the current server configuration is correct? You can also bind to the o2oa demo server to experience！</string>
@@ -780,7 +830,8 @@
     <string name="dialog_msg_clean_cache">Are you sure you want to clear the cache？</string>
     <string name="dialog_msg_logout">Are you sure you want to log out？</string>
     <string name="dialog_msg_need_rebind_phone_number">Are you sure you want to rebind the mobile phone number? This operation will clear the current login information and you need to login again？</string>
-
+    <string name="dialog_msg_audio_need_permission">Voice messages need permission, go to settings</string>
+    <string name="dialog_msg_camera_need_permission">Taking pictures requires permission, go to settings</string>
 
     <string name="choose">Choose</string>
     <string name="sign">Personal signature</string>
